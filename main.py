@@ -1,16 +1,24 @@
 import os
-from typing import Any, List, Mapping, Optional
-from discord.ext.commands.cog import Cog
-from discord.ext.commands.core import Command, Group
 from dotenv import load_dotenv
 import discord
 from discord.ext import commands
 import asyncio
+import json
 
 load_dotenv()
 
 bottoken=os.getenv('TOKEN')
-commandprefix=os.getenv('BOTPREFIX')
+afile=os.getenv('file')
+
+def getServerPrefix(client, message):
+    with open(afile,'r') as f:
+        prefix = json.load(f)
+
+    return prefix[str(message.guild.id)]
+
+
+# commandprefix=os.getenv('BOTPREFIX')
+
 
 
 # For creating custom help commands.
@@ -36,12 +44,43 @@ class customHelpComands(commands.HelpCommand):
 
     
     
-client = commands.Bot(command_prefix=commandprefix, intents=discord.Intents.all())
+client = commands.Bot(command_prefix=getServerPrefix, intents=discord.Intents.all())
 
 @client.event
 async def on_ready():
     print("bot is ready and booming!")
-    await client.change_presence(activity=discord.Game(f"type {os.getenv('BOTPREFIX')}help for help"))
+    await client.change_presence(activity=discord.Game(f"type {getServerPrefix}help for help"))
+
+@client.event
+async def on_guild_join(guild):
+    with open(afile,'r') as f:
+        prefix = json.load(f)
+
+    prefix[str(guild.id)]="."
+
+    with open(afile,'w') as f:
+        json.dump(prefix,f,indent=4)
+
+@client.event
+async def on_guild_remove(guild):
+    with open(afile,'r') as f:
+        prefix = json.load(f)
+
+    prefix.pop(str(guild.id))
+
+    with open(afile,'w') as f:
+        json.dump(prefix,f,indent=4)
+
+@client.command()
+async def setprefix(ctx, *, modprefix: str):
+    with open(afile,'r') as f:
+        prefix = json.load(f)
+
+    prefix[str(ctx.guild.id)]=modprefix
+
+    with open(afile,'w') as f:
+        json.dump(prefix,f,indent=4)
+
 
 async def load():
     for filename in os.listdir("./class"):
