@@ -21,8 +21,7 @@ Beginner's Type
 
 - **Rich Embeds**: Confirmation messages for moderation actions are sent as visually appealing rich embeds, providing essential information.
 
-- **Cog Setup**: Included is a setup function that simplifies adding the Moderation cog to your Discord bot.
-
+- **Cog Setup**: Included is a setup function that simplifies adding the Moderation cog to your Discord bot
 
 ## Tech
 
