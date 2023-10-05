@@ -1,5 +1,21 @@
-import discord from "discord.js";
-import { Client, GatewayIntentBits } from "discord.js";
+require("dotenv").config();
+const { Client, GatewayIntentBits } = require("discord.js");
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
+
+client.on("messageCreate", (message) => {
+  if (message.author.bot) {
+    return;
+  } else {
+    message.reply({
+      content: "Hi From Bot",
+    });
+  }
+});
+
+client.login(process.env.TOKEN);
